@@ -7,6 +7,7 @@ This is a small script that extracts all the shelters information from [this web
     <img src=".github/images/shelter-list-by-state.png">
     <img src=".github/images/shelter-list-by-state-2.png">
     <img src=".github/images/google-sheets-data.png">
+    <img src=".github/images/script-execution.png">
 </p>
 
 ## Pre-requisites
