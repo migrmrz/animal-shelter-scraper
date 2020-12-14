@@ -60,7 +60,7 @@ scopes = [
     "https://www.googleapis.com/auth/drive.file",
     "https://www.googleapis.com/auth/spreadsheets"
 ]
-flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
+flow = InstalledAppFlow.from_client_secrets_file('credentials.json', scopes)
 credentials = flow.run_local_server(port=0)  # Opens a browser for authentication
 with open('token.pickle', 'wb') as token:
     pickle.dump(credentials, token)  # Creates token.pickle file
