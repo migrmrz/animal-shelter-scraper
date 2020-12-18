@@ -8,6 +8,9 @@ from pprint import pprint
 
 # Extraction of shelter links from all states
 def extract_shelter_links() -> list:
+    """
+        Extraction of state shelters from mail url
+    """
     url = "https://www.dogloversdigest.com/adoption/state-list-of-shelters-" \
         "and-rescue-organizations/"
     req = requests.get(url)
@@ -22,6 +25,10 @@ def extract_shelter_links() -> list:
 
 # Extraction of shelter info from every shelter of the list
 def extract_shelter_details(shelter_urls: list) -> list:
+    """
+        Extraction of shelter details by state from each url passed in
+        parameters
+    """
     # Main structure that will store every shelter detail in a dict structure
     shelters_details = []
     for url in shelter_urls:
