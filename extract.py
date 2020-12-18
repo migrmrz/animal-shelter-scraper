@@ -67,7 +67,6 @@ def extract_shelter_details(shelter_urls: list) -> list:
     return shelters_details
 
 
-# Insertion of individual shelter info to Google Sheets
 def create_google_service():
     """
         Creates and returns a Google Sheets service from a pickle file
