@@ -1,9 +1,11 @@
 from bs4 import BeautifulSoup
 import requests
 from googleapiclient.discovery import build
+from google.auth.transport.requests import Request
 import pickle
 import datetime
 from pprint import pprint
+from progress.bar import IncrementalBar
 
 
 # Extraction of shelter links from all states
@@ -18,8 +20,11 @@ def extract_shelter_links() -> list:
     entry_content = soup.find(class_="entry-content")
     shelter_elements = entry_content.select("ul")[0].select("li a")
     shelter_urls = []
+    bar = IncrementalBar('URL extraction', max=len(shelter_elements))
     for shelter_link in shelter_elements:
         shelter_urls.append(shelter_link.get("href"))
+        bar.next()
+    bar.finish()
     return shelter_urls
 
 
@@ -39,8 +44,12 @@ def extract_shelter_details(shelter_urls: list) -> list:
         # Structure that will contain details of each shelter: name, url,
         # address, phone and email
         shelter_dict = {}
+        bar = IncrementalBar(
+            'Extracting shelter data', max=len(shelter_html_list)
+        )
         for shelter_html_data in shelter_html_list:
             if shelter_html_data.select("a")[0].get_text() == "here":
+                bar.next()
                 continue
             name = shelter_html_data.select("a")[0].get_text()
             shelter_dict['name'] = name
@@ -64,6 +73,8 @@ def extract_shelter_details(shelter_urls: list) -> list:
                 shelter_dict['address'] = ""
             shelters_details.append(shelter_dict)
             shelter_dict = {}
+            bar.next()
+        bar.finish()
     return shelters_details
 
 
@@ -101,11 +112,15 @@ def insert_data(shelters_details: list) -> dict:
     value_input_option = "RAW"
     values = []
     temp_row = []
+    print("Consolidating data for insertion...")
+    bar = IncrementalBar('Progress', max=len(shelters_details))
     for shelter in shelters_details:
         for row in shelter.values():
             temp_row.append(row)
+        bar.next()
         values.append(temp_row)
         temp_row = []
+    bar.finish()
     value_range_body = {
         "values": values
     }
@@ -115,15 +130,16 @@ def insert_data(shelters_details: list) -> dict:
         valueInputOption=value_input_option,
         insertDataOption=insert_data_option,
         body=value_range_body)
+    print("Inserting data...")
     edit_response = edit_request.execute()
-    pprint(edit_response['updates'])
-    return spreadsheet_name
+    print("spreadsheetId: " + edit_response['updates']['spreadsheetId'])
+    print("Spreadsheet Name: " + spreadsheet_name)
+    return
 
 
 urls = extract_shelter_links()
 details = extract_shelter_details(urls)
-print("Extracted a total of {} records".format(len(details)))
+print("Extracted a total of {} records\n".format(len(details)))
 print("Initiating insertion to Google Sheets...")
-print("Insertion results:")
 insert_data(details)
-print("\nDone!")
+print("Done!")
