@@ -1,10 +1,8 @@
 from bs4 import BeautifulSoup
 import requests
 from googleapiclient.discovery import build
-from google.auth.transport.requests import Request
 import pickle
 import datetime
-from pprint import pprint
 from progress.bar import IncrementalBar
 
 
